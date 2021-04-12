@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_app/ui/rootpage/splash_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,16 +21,13 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "APP",
-      debugShowCheckedModeBanner: false,
-      color: Colors.black,
-      theme: ThemeData(
-          accentColor: Colors.white,
-          accentTextTheme:
-              TextTheme(bodyText1: TextStyle(color: Colors.amber))),
-      home: Container(
-        color: Colors.amber,
-      ),
-    );
+        title: "APP",
+        debugShowCheckedModeBanner: false,
+        color: Colors.black,
+        theme: ThemeData(
+            accentColor: Colors.white,
+            accentTextTheme:
+                TextTheme(bodyText1: TextStyle(color: Colors.amber))),
+        home: SlashPage());
   }
 }

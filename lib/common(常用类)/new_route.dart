@@ -2,12 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/ui/page/soil.dart';
 
+/// 文字标识
 class StringSMacro {
   // 广告模型标识
   static const String SplashAdModel = "/SpashAdmodel";
 
   static const String TabberStr = "/";
   static const String SoilStr = '/soil';
+}
+
+/// 图片标识
+class ImageStringMacro {
+  /// 引导页图片
+  static const String LaunchimageStr = "ios/Runner/launch.png";
 }
 
 class RouteManager {

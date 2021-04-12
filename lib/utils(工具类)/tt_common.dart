@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -27,7 +25,7 @@ class Utils {
   }
 }
 
-class SizeNacro {
+class SizeMacro {
   // 屏幕宽
   double screenWidth = ScreenUtil().screenWidth;
   // 屏幕高
