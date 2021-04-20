@@ -155,7 +155,10 @@ class SlashPageState extends State<SlashPage> {
     _timerUtil.startCountDown();
   }
 
-  goMian() {}
+  goMian() {
+    SpUtil.putBool(StringSMacro.SoilStr, false);
+    RouteManager.goMain(context);
+  }
 
   /// 公开方法
   ///

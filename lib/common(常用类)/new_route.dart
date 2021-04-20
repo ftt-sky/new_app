@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:new_app/ui/page/soil.dart';
+import 'package:new_app/ui/rootpage/tabbar.dart';
 
 /// 文字标识
 class StringSMacro {
@@ -15,12 +16,32 @@ class StringSMacro {
 class ImageStringMacro {
   /// 引导页图片
   static const String LaunchimageStr = "ios/Runner/launch.png";
+
+  /// tabbar 突出按钮图片
+  static const String tabberCenterimgStr = 'images/plus.png';
+
+  ///
+  static const String homeStr = 'images/home.png';
+
+  static const String homesStr = 'images/home_s.png';
+
+  static const String findStr = 'images/find.png';
+
+  static const String findsStr = 'images/find_s.png';
+
+  static const String hotStr = 'images/hot.png';
+
+  static const String hotsStr = 'images/hot_s.png';
+
+  static const String myStr = 'images/my.png';
+
+  static const String mysStr = 'images/my_s.png';
 }
 
 class RouteManager {
   /// 跳转首页
   static goMain(BuildContext context) {
-    pushReplacementPage(context, StringSMacro.SoilStr);
+    pushReplacementPage(context, StringSMacro.TabberStr);
   }
 
   /*
@@ -70,6 +91,9 @@ class RouteManager {
   * */
   static Widget configCurrentWidgt(String name) {
     switch (name) {
+      case StringSMacro.TabberStr:
+        return TTabBar();
+        break;
       case StringSMacro.SoilStr:
         return SoilPage();
         break;
