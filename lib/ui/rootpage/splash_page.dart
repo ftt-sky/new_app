@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:new_app/current_index.dart';
 import 'package:new_app/models(实体类)/currentModel.dart';
-import 'package:new_app/repository/current_repository.dart';
+import 'package:new_app/data(网络数据层)/repository/current_repository.dart';
 
 class SlashPage extends StatefulWidget {
   @override

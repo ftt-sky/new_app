@@ -27,10 +27,10 @@ class TTabBarState extends State<TTabBar> {
   var _appBarTitles = ['金', '木', '水', '火', '土'];
 
   var _appBarWidgetNames = [
-    StringSMacro.SoilStr,
-    StringSMacro.SoilStr,
-    StringSMacro.SoilStr,
-    StringSMacro.SoilStr,
+    StringSMacro.GoldStr,
+    StringSMacro.WoodStr,
+    StringSMacro.WaterStr,
+    StringSMacro.FireStr,
     StringSMacro.SoilStr
   ];
 
@@ -157,10 +157,11 @@ class TTabBarState extends State<TTabBar> {
   }
 
   BottomNavigationBarItem configBottomBarItem(int index) {
-    return BottomNavigationBarItem(
+    var bottomNavigationBarItem = BottomNavigationBarItem(
       icon: getTabIcon(index),
-      title: getTabTitle(index),
+      label: _appBarTitles[index],
     );
+    return bottomNavigationBarItem;
   }
 
   /// 获取字体
@@ -173,13 +174,19 @@ class TTabBarState extends State<TTabBar> {
 
   /// 创建中间按钮
   Widget configFloatButton() {
-    return FloatingActionButton(
-      onPressed: () {},
-      child: Image.asset(
+    return FloatingActionButton.extended(
+      onPressed: () {
+        setState(() {
+          _tabIndex = 2;
+        });
+      },
+      shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      icon: Image.asset(
         ImageStringMacro.tabberCenterimgStr,
         width: 60,
         height: 60,
       ),
+      label: Text(''),
     );
   }
 
@@ -205,7 +212,8 @@ class TTabBarState extends State<TTabBar> {
   Widget configBottomAppBar() {
     return BottomAppBar(
       color: Theme.of(context).accentColor,
-      shape: CircularNotchedRectangle(),
+      shape: AutomaticNotchedShape(RoundedRectangleBorder(),
+          BeveledRectangleBorder(borderRadius: BorderRadius.circular(10))),
       child: configBottomAppBarChild(),
     );
   }

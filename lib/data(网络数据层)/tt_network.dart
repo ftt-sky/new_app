@@ -1,9 +1,7 @@
-
 import 'dart:io';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'base_resp.dart';
-
 
 /// 请求方法.
 class Method {
@@ -14,7 +12,6 @@ class Method {
   static final String delete = "DELETE";
   static final String patch = "PATCH";
 }
-
 
 ///Http配置.
 class HttpConfig {
@@ -43,7 +40,6 @@ class HttpConfig {
   BaseOptions options;
 }
 
-
 class TTNetWorkingManager {
   /// 单利
   static final TTNetWorkingManager _manager = TTNetWorkingManager._init();
@@ -52,20 +48,21 @@ class TTNetWorkingManager {
 
   String _statusKey = "status";
 
-  String _codeKey = "code";
+  String _codeKey = "errorCode";
 
-  String _msgKey = "msg";
+  String _msgKey = "errorMsg";
 
   String _dataKey = "data";
 
   BaseOptions _options = getDefOptions();
 
-  static bool _isDebug = false;
+  static bool _isDebug = true;
 
   /// 获取对象
-  static  TTNetWorkingManager getInstance() {
+  static TTNetWorkingManager getInstance() {
     return _manager;
   }
+
   /// 获取对象
   factory TTNetWorkingManager() {
     return _manager;
@@ -89,7 +86,6 @@ class TTNetWorkingManager {
     _options = config.options ?? getDefOptions();
   }
 
-
   /*
  * 获取网路请求
  * method 请求方法
@@ -100,28 +96,26 @@ class TTNetWorkingManager {
  * */
   Future<BaseResp<T>> request<T>(String method, String path,
       {data, Options options, CancelToken cancelToken}) async {
-    BaseRespR respR = await requestR(
-        method,
-        path,
-        data: data,
-        cancelToken: cancelToken);
-    if(respR.response.statusCode == HttpStatus.ok ||
+    BaseRespR respR =
+        await requestR(method, path, data: data, cancelToken: cancelToken);
+    if (respR.response.statusCode == HttpStatus.ok ||
         respR.response.statusCode == HttpStatus.created) {
       try {
         return BaseResp(respR.status, respR.code, respR.msg, respR.data);
-      }catch (e) {
+      } catch (e) {
         return new Future.error(new DioError(
           response: respR.response,
           type: DioErrorType.response,
+          requestOptions: null,
         ));
       }
     }
     return new Future.error(new DioError(
       response: respR.response,
       type: DioErrorType.response,
+      requestOptions: null,
     ));
   }
-
 
   /*
  * 获取网路请求
@@ -133,11 +127,10 @@ class TTNetWorkingManager {
  * */
   Future<BaseRespR<T>> requestR<T>(String method, String path,
       {data, Options options, CancelToken cancelToken}) async {
-
     Response response = await _dio.request(
       path,
       data: data,
-      options:  _checkOptions(method, options) ,
+      options: _checkOptions(method, options),
       cancelToken: cancelToken,
     );
 
@@ -146,10 +139,10 @@ class TTNetWorkingManager {
     int code;
     String msg;
     T _data;
-    if(response.statusCode == HttpStatus.ok ||
+    if (response.statusCode == HttpStatus.ok ||
         response.statusCode == HttpStatus.created) {
-      try{
-        if(response.data is Map) {
+      try {
+        if (response.data is Map) {
           status = (response.data[_statusKey] is int)
               ? response.data[_statusKey].toString()
               : response.data[_statusKey];
@@ -158,7 +151,7 @@ class TTNetWorkingManager {
               : response.data[_codeKey];
           msg = response.data[_msgKey];
           _data = response.data[_dataKey];
-        }else {
+        } else {
           Map<String, dynamic> _dataMap = _decodeData(response);
           status = (_dataMap[_statusKey] is int)
               ? _dataMap[_statusKey].toString()
@@ -170,35 +163,21 @@ class TTNetWorkingManager {
           _data = _dataMap[_dataMap];
         }
         print(code);
-        return BaseRespR(status,code,msg,_data,response);
-      }catch (e) {
+        return BaseRespR(status, code, msg, _data, response);
+      } catch (e) {
         return new Future.error(new DioError(
           response: response,
           type: DioErrorType.response,
+          requestOptions: null,
         ));
       }
     }
     return new Future.error(new DioError(
       response: response,
       type: DioErrorType.response,
+      requestOptions: null,
     ));
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   /// decode response data.
   Map<String, dynamic> _decodeData(Response response) {
@@ -209,8 +188,6 @@ class TTNetWorkingManager {
     }
     return json.decode(response.data.toString());
   }
-
-
 
   /// print Http Log.
   void _printHttpLog(Response response) {
@@ -253,40 +230,22 @@ class TTNetWorkingManager {
     }
   }
 
-
-
   /// 验证是否存在
   Options _checkOptions(method, Options options) {
-    if(options == null) {
+    if (options == null) {
       options = Options();
     }
     options.method = method;
     return options;
   }
 
-
   /// 设置默认配置
   static BaseOptions getDefOptions() {
-    BaseOptions options = BaseOptions(
-        connectTimeout: 5000,
-        receiveTimeout: 3000,
-        headers: {
-          HttpHeaders.userAgentHeader:"dio",
-          'api':'1.0.0',
-        }
-    );
+    BaseOptions options =
+        BaseOptions(connectTimeout: 5000, receiveTimeout: 3000, headers: {
+      HttpHeaders.userAgentHeader: "dio",
+      'api': '1.0.0',
+    });
     return options;
   }
-
-
-
-
-
-
-
-
-
-
-
-
 }

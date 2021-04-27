@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -48,6 +50,13 @@ dependencies:
   # 7、NumUtil : 保留x位小数, 精确加、减、乘、除, 防止精度丢失.
   # 8、ObjectUtil : 判断对象是否为空(String List Map),判断两个List是否相等.
   common_utils: ^2.0.2
+  # Flutter 国际化
+  fluintl: ^2.0.0  
+  # 上下啦刷新控件
+  pull_to_refresh: ^1.6.5
+
+  # Flutter 常用工具类库 https://github.com/Sky24n/flustars
+  flustars: ^2.0.1
 
 
 dev_dependencies:

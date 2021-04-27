@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:new_app/ui/page/soil.dart';
+import 'package:new_app/ui/page/gold/home_page.dart';
+import 'package:new_app/ui/page/page_index.dart';
 import 'package:new_app/ui/rootpage/tabbar.dart';
 
 /// 文字标识
@@ -8,8 +9,19 @@ class StringSMacro {
   // 广告模型标识
   static const String SplashAdModel = "/SpashAdmodel";
 
+  /// Tabbar 标识
   static const String TabberStr = "/";
+
   static const String SoilStr = '/soil';
+
+  static const String WoodStr = '/wood';
+
+  static const String WaterStr = '/water';
+
+  static const String FireStr = '/fire';
+
+  static const String GoldStr = '/gold';
+  static const String GoldHome = '/goldhome';
 }
 
 /// 图片标识
@@ -41,7 +53,7 @@ class ImageStringMacro {
 class RouteManager {
   /// 跳转首页
   static goMain(BuildContext context) {
-    pushReplacementPage(context, StringSMacro.TabberStr);
+    pushReplacementPage(context, StringSMacro.GoldStr);
   }
 
   /*
@@ -97,6 +109,26 @@ class RouteManager {
       case StringSMacro.SoilStr:
         return SoilPage();
         break;
+
+      case StringSMacro.FireStr:
+        return FirdPage();
+        break;
+
+      case StringSMacro.GoldStr:
+        return GoldPage();
+        break;
+      case StringSMacro.GoldHome:
+        return HomePage();
+        break;
+
+      case StringSMacro.WaterStr:
+        return WaterPage();
+        break;
+
+      case StringSMacro.WoodStr:
+        return WoodPage();
+        break;
+
       default:
         return SoilPage();
     }
