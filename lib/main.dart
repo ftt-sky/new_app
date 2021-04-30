@@ -47,7 +47,6 @@ class MyAppState extends State<MyApp> {
 
   _init() {
     BaseOptions baseOptions = TTNetWorkingManager.getDefOptions();
-
     baseOptions.baseUrl = Constant.setverAddress;
     HttpConfig config = HttpConfig(options: baseOptions);
     TTNetWorkingManager().setConfig(config);

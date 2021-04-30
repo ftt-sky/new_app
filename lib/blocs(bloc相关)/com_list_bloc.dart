@@ -64,6 +64,7 @@ class ComListBloc implements BlocBase {
   /// 获取项目列表
   Future getRepos(String labelId, int cid, int page) async {
     ComReq _comReq = new ComReq(cid);
+    TTLog.d(_comReq.toJson());
     return _goldResitory
         .getProjectList(page: page, data: _comReq.toJson())
         .then((list) {

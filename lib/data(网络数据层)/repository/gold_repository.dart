@@ -23,12 +23,11 @@ class GoldResitory {
 
   /// 获取首页推荐文章
   Future<List<ReposModel>> getProjectList({int page: 1, data}) async {
+    TTLog.d('我的第一次接收参数:$data');
+    var url =
+        CurrentApi.getWanAndroidPath(path: CurrentApi.PROJECT_LIST, page: page);
     BaseResp<Map<String, dynamic>> baseResp = await TTNetWorkingManager()
-        .request<Map<String, dynamic>>(
-            Method.get,
-            CurrentApi.getWanAndroidPath(
-                path: CurrentApi.PROJECT_LIST, page: page),
-            data: data);
+        .request<Map<String, dynamic>>(Method.get, url, data: data);
     List<ReposModel> list;
     if (baseResp.code != Constant.status_success) {
       return new Future.error(baseResp.msg);

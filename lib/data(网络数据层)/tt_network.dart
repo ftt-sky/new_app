@@ -1,6 +1,8 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:new_app/utils(%E5%B7%A5%E5%85%B7%E7%B1%BB)/tt_logutils.dart';
 import 'base_resp.dart';
 
 /// 请求方法.
@@ -56,7 +58,7 @@ class TTNetWorkingManager {
 
   BaseOptions _options = getDefOptions();
 
-  static bool _isDebug = true;
+  static bool _isDebug = false;
 
   /// 获取对象
   static TTNetWorkingManager getInstance() {
@@ -73,6 +75,11 @@ class TTNetWorkingManager {
     _dio = Dio(_options);
   }
 
+  /// 打开debug 模式
+  static openDebug() {
+    _isDebug = true;
+  }
+
   /// 设置cookie
   void setHeaders(Map<String, dynamic> headers) {
     _dio.options.headers = headers;
@@ -83,7 +90,7 @@ class TTNetWorkingManager {
     _codeKey = config.code ?? _codeKey;
     _msgKey = config.msg ?? _msgKey;
     _dataKey = config.data ?? _dataKey;
-    _options = config.options ?? getDefOptions();
+    _mergeOption(config.options);
   }
 
   /*
@@ -96,6 +103,7 @@ class TTNetWorkingManager {
  * */
   Future<BaseResp<T>> request<T>(String method, String path,
       {data, Options options, CancelToken cancelToken}) async {
+    TTLog.d('我是参数:$data');
     BaseRespR respR =
         await requestR(method, path, data: data, cancelToken: cancelToken);
     if (respR.response.statusCode == HttpStatus.ok ||
@@ -129,6 +137,7 @@ class TTNetWorkingManager {
       {data, Options options, CancelToken cancelToken}) async {
     Response response = await _dio.request(
       path,
+      queryParameters: data,
       data: data,
       options: _checkOptions(method, options),
       cancelToken: cancelToken,
@@ -189,6 +198,20 @@ class TTNetWorkingManager {
     return json.decode(response.data.toString());
   }
 
+  void _mergeOption(BaseOptions opt) {
+    _options.method = opt.method ?? _options.method;
+    _options.headers = (new Map.from(_options.headers))..addAll(opt.headers);
+    _options.baseUrl = opt.baseUrl ?? _options.baseUrl;
+    _options.connectTimeout = opt.connectTimeout ?? _options.connectTimeout;
+    _options.receiveTimeout = opt.receiveTimeout ?? _options.receiveTimeout;
+    _options.responseType = opt.responseType ?? _options.responseType;
+    _options.queryParameters = opt.queryParameters ?? _options.queryParameters;
+    _options.extra = (new Map.from(_options.extra))..addAll(opt.extra);
+    _options.contentType = opt.contentType ?? _options.contentType;
+    _options.validateStatus = opt.validateStatus ?? _options.validateStatus;
+    _options.followRedirects = opt.followRedirects ?? _options.followRedirects;
+  }
+
   /// print Http Log.
   void _printHttpLog(Response response) {
     if (!_isDebug) {
@@ -239,13 +262,30 @@ class TTNetWorkingManager {
     return options;
   }
 
+  Dio getDio() {
+    return _dio;
+  }
+
+  /// 创建新的 dio
+  static Dio createNewDio([BaseOptions options]) {
+    options = options ?? getDefOptions();
+    Dio dio = Dio(options);
+    return dio;
+  }
+
   /// 设置默认配置
   static BaseOptions getDefOptions() {
-    BaseOptions options =
-        BaseOptions(connectTimeout: 5000, receiveTimeout: 3000, headers: {
-      HttpHeaders.userAgentHeader: "dio",
-      'api': '1.0.0',
-    });
+    BaseOptions options = BaseOptions(
+
+        /// 连接服务器事件 单位毫秒
+        connectTimeout: 5000,
+
+        /// 接收服务器时间 单位毫秒
+        receiveTimeout: 3000,
+        headers: {
+          HttpHeaders.userAgentHeader: "dio",
+          'api': '1.0.0',
+        });
     return options;
   }
 }

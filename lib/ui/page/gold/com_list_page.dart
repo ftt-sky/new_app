@@ -16,7 +16,7 @@ class ComListPage extends StatelessWidget {
         controller.loadComplete();
       }
     });
-
+    TTLog.d(cid);
     return StreamBuilder(
         stream: bloc.comListStream,
         builder:
