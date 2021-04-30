@@ -5,18 +5,18 @@ import 'package:new_app/ui/page/gold/gold_banner.dart';
 class ComListPage extends StatelessWidget {
   final String labelId;
   final int cid;
-  const ComListPage({Key key, this.labelId, this.cid}) : super(key: key);
-
+  ComListPage({Key key, this.labelId, this.cid}) : super(key: key);
+  RefreshController controller = RefreshController();
   @override
   Widget build(BuildContext context) {
-    RefreshController controller = RefreshController();
+    // RefreshController controller = RefreshController();
     final ComListBloc bloc = BlocProvider.of<ComListBloc>(context);
     bloc.comListEventStream.listen((event) {
       if (cid == event.cid) {
-        controller.loadComplete();
+        TTLog.d("我真的想看啊看  你回来这里");
+        configEndRefresh(event.loadStaus);
       }
     });
-    TTLog.d(cid);
     return StreamBuilder(
         stream: bloc.comListStream,
         builder:
@@ -33,7 +33,8 @@ class ComListPage extends StatelessWidget {
             onRefresh: ({isReload}) {
               return bloc.onRefresh(labelId: labelId, cid: cid);
             },
-            onLoadMore: (up) {
+            onLoadMore: () {
+              TTLog.d('上啦刷新吗');
               bloc.onLoadMore(labeId: labelId, cid: cid);
             },
             itemCount: snapshot.data == null ? 0 : snapshot.data.length,
@@ -45,5 +46,15 @@ class ComListPage extends StatelessWidget {
             },
           );
         });
+  }
+
+  /// 结束刷新
+  void configEndRefresh(int type) {
+    TTLog.d(type);
+    if (type == 1) {
+      controller.refreshCompleted();
+    } else {
+      controller.loadComplete();
+    }
   }
 }

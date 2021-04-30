@@ -5,6 +5,7 @@ class StatusEvent {
 
   int cid;
 
+  /// 1 下拉刷新  2 上啦加载更多
   int loadStaus;
 
   int loadNum;

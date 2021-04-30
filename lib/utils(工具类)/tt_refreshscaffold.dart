@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:new_app/event(事件类)/event.dart';
-import 'tt_customwidget.dart';
 
-typedef OnLoadMore(bool up);
+typedef OnLoadMore = void Function();
 typedef OnRefreshCallback = Future<void> Function({bool isReload});
 
 class TTRefreshScaffold extends StatefulWidget {
@@ -90,7 +89,7 @@ class TTTrefreshScaffoldState extends State<TTRefreshScaffold> {
           ListView.builder(
               itemBuilder: widget.itemBuilder, itemCount: widget.itemCount),
       onRefresh: widget.onRefresh,
-      onLoading: widget.onRefresh,
+      onLoading: widget.onLoadMore,
     );
   }
 

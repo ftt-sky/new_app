@@ -39,9 +39,8 @@ class ComListBloc implements BlocBase {
 
   @override
   Future onLoadMore({data, String labeId, int cid}) {
-    int page = 0;
-    page = ++_comListPage;
-    return getData(labelId: labeId, page: page, cid: cid);
+    _comListPage = _comListPage + 1;
+    return getData(labelId: labeId, page: _comListPage, cid: cid);
   }
 
   @override
@@ -72,6 +71,7 @@ class ComListBloc implements BlocBase {
       if (page == 1) {
         comList.clear();
       }
+      TTLog.d('当前页数 ------------ $page');
       comList.addAll(list);
       _comListSink.add(UnmodifiableListView<ReposModel>(comList));
       _comListEventSink.add(new StatusEvent(
@@ -79,12 +79,13 @@ class ComListBloc implements BlocBase {
           ObjectUtil.isEmpty(list)
               ? RequestStatus.noMore
               : RequestStatus.success,
-          1,
+          page == 1 ? 1 : 2,
           cid: cid));
     }).catchError((_) {
       _comListPage--;
-      _comListEventSink
-          .add(new StatusEvent(labelId, RequestStatus.fail, 1, cid: cid));
+      _comListEventSink.add(new StatusEvent(
+          labelId, RequestStatus.fail, page == 1 ? 1 : 2,
+          cid: cid));
     });
   }
 
@@ -106,12 +107,13 @@ class ComListBloc implements BlocBase {
           ObjectUtil.isEmpty(value)
               ? RequestStatus.noMore
               : RequestStatus.success,
-          1,
+          page == 1 ? 1 : 2,
           cid: cid));
     }).catchError((_) {
       _comListPage--;
-      _comListEventSink
-          .add(new StatusEvent(labelId, RequestStatus.fail, 1, cid: cid));
+      _comListEventSink.add(new StatusEvent(
+          labelId, RequestStatus.fail, page == 1 ? 1 : 2,
+          cid: cid));
     });
   }
 
