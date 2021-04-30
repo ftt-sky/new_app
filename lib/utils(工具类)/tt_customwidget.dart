@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:new_app/blocs(bloc%E7%9B%B8%E5%85%B3)/bloc_provider.dart';
-import 'package:new_app/blocs(bloc%E7%9B%B8%E5%85%B3)/main_bloc.dart';
 import 'package:new_app/current_index.dart';
 import 'package:new_app/event(事件类)/event.dart';
 import 'package:new_app/utils(%E5%B7%A5%E5%85%B7%E7%B1%BB)/tt_common.dart';
@@ -18,7 +16,7 @@ Widget conFigNetWorkImage(
       height: height,
       fit: BoxFit.fill,
       placeholder: (context, url) {
-        return ProgressWidget();
+        return ProgressView();
       },
       errorWidget: (context, url, error) {
         return Icon(Icons.error);
@@ -29,19 +27,61 @@ Widget conFigNetWorkImage(
   );
 }
 
-/// 进度条
-class ProgressWidget extends StatelessWidget {
+/// 圆形进度条
+class ProgressView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 24,
-        height: 24,
-        child: CircularProgressIndicator(
+    return new Center(
+      child: new SizedBox(
+        width: 24.0,
+        height: 24.0,
+        child: new CircularProgressIndicator(
           strokeWidth: 2.0,
         ),
       ),
     );
+  }
+}
+
+/// 直线进度条
+class TTProgressBar extends StatefulWidget {
+  double progress;
+  TTProgressBar({this.progress, Key key}) : super(key: key);
+  @override
+  State<StatefulWidget> createState() {
+    return TTProgressBarState();
+  }
+}
+
+class TTProgressBarState extends State<TTProgressBar>
+    with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+  @override
+  void initState() {
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 0));
+    _animationController.forward();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: proGressBar(widget.progress, context));
+  }
+
+  Widget proGressBar(double progress, BuildContext context) {
+    if (progress == 1.0) {
+      return Container(height: 0);
+    } else {
+      return Container(
+        child: LinearProgressIndicator(
+            backgroundColor: ColorsMacro.col_CDA,
+            value: progress == 1.0 ? 0 : progress,
+            valueColor: ColorTween(begin: Colors.orange, end: Colors.red)
+                .animate(_animationController)),
+        height: 2,
+      );
+    }
   }
 }
 

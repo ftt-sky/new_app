@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:new_app/current_index.dart';
 import 'package:new_app/event(%E4%BA%8B%E4%BB%B6%E7%B1%BB)/event.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:lpinyin/lpinyin.dart';
 
 /// 颜色宏定义
 class ColorsMacro {
@@ -39,10 +40,23 @@ class Utils {
     if (data == null) {
       return RequestStatus.loading;
     } else if (data.isEmpty) {
-      return RequestStatus.noMore;
+      return RequestStatus.empty;
     } else {
       return RequestStatus.success;
     }
+  }
+
+  static String getPinyin(String str) {
+    return PinyinHelper.getShortPinyin(str).substring(0, 1).toUpperCase();
+  }
+
+  static Color getCircleBg(String str) {
+    String pinyin = getPinyin(str);
+    return getCircleAvatarBg(pinyin);
+  }
+
+  static Color getCircleAvatarBg(String key) {
+    return circleAvatarMap[key];
   }
 
   /// 时间转换
@@ -67,6 +81,36 @@ class Utils {
     return (count >= 10 || title.length > 16) ? 14 : 18;
   }
 }
+
+Map<String, Color> circleAvatarMap = {
+  'A': Colors.blueAccent,
+  'B': Colors.blue,
+  'C': Colors.cyan,
+  'D': Colors.deepPurple,
+  'E': Colors.deepPurpleAccent,
+  'F': Colors.blue,
+  'G': Colors.green,
+  'H': Colors.lightBlue,
+  'I': Colors.indigo,
+  'J': Colors.blue,
+  'K': Colors.blue,
+  'L': Colors.lightGreen,
+  'M': Colors.blue,
+  'N': Colors.brown,
+  'O': Colors.orange,
+  'P': Colors.purple,
+  'Q': Colors.black,
+  'R': Colors.red,
+  'S': Colors.blue,
+  'T': Colors.teal,
+  'U': Colors.purpleAccent,
+  'V': Colors.black,
+  'W': Colors.brown,
+  'X': Colors.blue,
+  'Y': Colors.yellow,
+  'Z': Colors.grey,
+  '#': Colors.blue,
+};
 
 class SizeMacro {
   // 屏幕宽

@@ -65,4 +65,57 @@ class GoldResitory {
     TTLog.d('ddsadsadsadsada');
     return list;
   }
+
+  /// 首页文章列表
+  Future<List<ReposModel>> getArticleList({int page, data}) async {
+    BaseResp<Map<String, dynamic>> baseResp = await TTNetWorkingManager()
+        .request<Map<String, dynamic>>(Method.get,
+            CurrentApi.getWanAndroidPath(path: CurrentApi.article, page: page),
+            data: data);
+    List<ReposModel> list;
+    if (baseResp.code != Constant.status_success) {
+      return new Future.error(baseResp.msg);
+    }
+    if (baseResp.data != null) {
+      ComData comData = ComData.fromJson(baseResp.data);
+      list = comData.datas.map((value) {
+        return ReposModel.fromJson(value);
+      }).toList();
+    }
+    return list;
+  }
+
+  /// 获取公众号列表
+  Future<List<TreeModel>> getWxArticleChapters() async {
+    BaseResp<List> baseResp = await TTNetWorkingManager().request<List>(
+        Method.get,
+        CurrentApi.getWanAndroidPath(path: CurrentApi.WXARTICLE_CHAPTERS));
+    List<TreeModel> treeList;
+    if (baseResp.code != Constant.status_success) {
+      return new Future.error(baseResp.msg);
+    }
+    if (baseResp.data != null) {
+      treeList = baseResp.data.map((value) {
+        return TreeModel.fromJson(value);
+      }).toList();
+    }
+    return treeList;
+  }
+
+  /// 获取热门分类
+  Future<List<TreeModel>> getProjectTree() async {
+    BaseResp<List> baseResp = await TTNetWorkingManager().request<List>(
+        Method.get,
+        CurrentApi.getWanAndroidPath(path: CurrentApi.PROJECT_TREE));
+    List<TreeModel> treeList;
+    if (baseResp.code != Constant.status_success) {
+      return new Future.error(baseResp.msg);
+    }
+    if (baseResp.data != null) {
+      treeList = baseResp.data.map((value) {
+        return TreeModel.fromJson(value);
+      }).toList();
+    }
+    return treeList;
+  }
 }

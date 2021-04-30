@@ -9,6 +9,7 @@ typedef OnRefreshCallback = Future<void> Function({bool isReload});
 class TTRefreshScaffold extends StatefulWidget {
   const TTRefreshScaffold(
       {Key key,
+      this.labelId,
       this.loadStatus,
       @required this.controller,
       this.enablePullDown: true,
@@ -18,6 +19,8 @@ class TTRefreshScaffold extends StatefulWidget {
       this.child,
       this.itemBuilder,
       this.itemCount});
+
+  final String labelId;
 
   /// 滚动视图
   final RefreshController controller;

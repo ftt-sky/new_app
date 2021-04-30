@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:new_app/blocs(bloc%E7%9B%B8%E5%85%B3)/bloc_provider.dart';
+import 'package:new_app/current_index.dart';
+import 'package:new_app/data(%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%B1%82)/data_index.dart';
 import 'package:new_app/ui/page/gold/home_page.dart';
 import 'package:new_app/ui/page/page_index.dart';
 import 'package:new_app/ui/rootpage/tabbar.dart';
+import 'package:new_app/ui/page/gold/gold_page.dart';
 
 /// 文字标识
 class StringSMacro {
@@ -96,6 +100,38 @@ class RouteManager {
   // 获取带路由的IOS风格 page
   static Route<dynamic> configCuPerPageRoute(String name) {
     return CupertinoPageRoute(builder: (_) => configCurrentWidgt(name));
+  }
+
+  /// 通用跳转web界面
+  static pushWeb(BuildContext context,
+      {String title, String titleId, String url, bool isHome: false}) {
+    if (context == null || ObjectUtil.isEmpty(url)) {
+      return;
+    }
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (ctx) => TTWebViewPlugin(
+                  title: title,
+                  url: url,
+                )));
+  }
+
+  static void pushTabPage(BuildContext context,
+      {String labelId, String title, String titleId, TreeModel treeModel}) {
+    if (context == null) return;
+    Navigator.push(
+        context,
+        new CupertinoPageRoute<void>(
+            builder: (ctx) => new BlocProvider<TabBloc>(
+                  child: TabPage(
+                    labelId: labelId,
+                    title: title,
+                    titleId: titleId,
+                    treeModel: treeModel,
+                  ),
+                  bloc: new TabBloc(),
+                )));
   }
 
   /*

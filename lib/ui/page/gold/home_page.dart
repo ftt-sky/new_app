@@ -45,38 +45,16 @@ class HomePage extends StatelessWidget {
                   stream: bloc.recReposStream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<ReposModel>> snapshot) {
-                    return buildRepos(context, snapshot.data);
+                    return createRepos(context, snapshot.data, 1);
                   }),
               // StreamBuilder(
               //     stream: bloc.recWxArticleStream,
               //     builder: (BuildContext context,
               //         AsyncSnapshot<List<ReposModel>> snapshot) {
-              //       return buildWxArticle(context, snapshot.data);
+              //       return createRepos(context, snapshot.data, 2);
               //     }),
             ],
           );
-
-          //  TTRefreshScaffold(
-          //   controller: _controller,
-          //   loadStatus: Utils.getLoadStatus(snapshot.hasError, snapshot.data),
-          //   enablePullUp: true,
-          //   onRefresh: ({bool isReload}) {
-          //     return bloc.onRefresh(labelId: labelId);
-          //   },
-          //   child: ListView(
-          //     children: [
-          //       buildBannerWidget(context, snapshot.data),
-          //       SizedBox(
-          //           height: 10, child: Container(color: ColorsMacro.col_F7F)),
-          //       StreamBuilder(
-          //           stream: bloc.recReposStream,
-          //           builder: (BuildContext context,
-          //               AsyncSnapshot<List<ReposModel>> snapshot) {
-          //             return createRepos(context, snapshot.data, 1);
-          //           })
-          //     ],
-          //   ),
-          // );
         });
   }
 
@@ -97,11 +75,20 @@ class HomePage extends StatelessWidget {
     }).toList();
     List<Widget> children = [];
     children.add(HeaderItem(
-      margin: EdgeInsets.only(left: 15),
+      margin: EdgeInsets.only(left: 0),
       title: type == 1 ? "推荐文章" : "公共号文章",
       leftIcon: Icons.book,
       titleId: CurrentIds.recRepos,
-      onTap: () {},
+      onTap: () {
+        RouteManager.pushTabPage(context,
+            labelId: type == 1
+                ? CurrentIds.titleReposTree
+                : CurrentIds.titleWxArticleTree,
+            titleId: type == 1
+                ? CurrentIds.titleReposTree
+                : CurrentIds.titleWxArticleTree,
+            title: type == 1 ? "推荐文章" : "公共号文章");
+      },
     ));
     children.addAll(_children);
     return Column(
@@ -121,7 +108,7 @@ class HomePage extends StatelessWidget {
         isHome: true,
       );
     }).toList();
-    List<Widget> children = new List();
+    List<Widget> children = [];
     children.add(
       SizedBox(height: 10, child: Container(color: ColorsMacro.col_F7F)),
     );

@@ -57,6 +57,12 @@ dependencies:
 
   # Flutter 常用工具类库 https://github.com/Sky24n/flustars
   flustars: ^2.0.1
+  # web 
+  flutter_webview_plugin: ^0.3.10+2
+  # Flutter 城市列表
+  azlistview: ^1.1.1
+  # 汉字转拼音
+  lpinyin: ^2.0.1
 
 
 dev_dependencies:

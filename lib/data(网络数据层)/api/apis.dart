@@ -16,6 +16,9 @@ class CurrentApi {
   /// 项目分类
   static const String PROJECT_TREE = "project/tree";
 
+  /// 获取公众号列表 http://wanandroid.com/wxarticle/chapters/json
+  static const String WXARTICLE_CHAPTERS = "wxarticle/chapters";
+
   /// 项目分类
   /// 拼接URL
   static String getPath(String path) {

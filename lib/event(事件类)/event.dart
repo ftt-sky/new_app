@@ -24,5 +24,8 @@ enum RequestStatus {
   noMore,
 
   /// 网络加载中
-  loading
+  loading,
+
+  /// 数据不存在
+  empty
 }
