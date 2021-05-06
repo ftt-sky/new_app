@@ -87,7 +87,7 @@ class MyAppState extends State<MyApp> {
         /// 设置支持本地化语言集合
         supportedLocales: CustomLocalizations.supportedLocales,
         title: "APP",
-        debugShowCheckedModeBanner: true,
+        debugShowCheckedModeBanner: false,
         color: Colors.black,
         theme: ThemeData(
             accentColor: Colors.white,

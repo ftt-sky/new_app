@@ -22,7 +22,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     RefreshController _controller = RefreshController(initialRefresh: false);
     final MainBloc bloc = BlocProvider.of<MainBloc>(context);
-    bloc.homeEventStream.listen((event) {});
+    bloc.homeEventStream.listen((event) {
+      _controller.refreshCompleted();
+    });
 
     if (isHomeInit) {
       isHomeInit = false;
@@ -36,31 +38,42 @@ class HomePage extends StatelessWidget {
         builder:
             (BuildContext context, AsyncSnapshot<List<BannerModel>> snapshot) {
           TTLog.d(snapshot);
-          return ListView(
-            children: [
-              buildBannerWidget(context, snapshot.data),
-              SizedBox(
-                  height: 10, child: Container(color: ColorsMacro.col_F7F)),
-              StreamBuilder(
-                  stream: bloc.recReposStream,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<ReposModel>> snapshot) {
-                    return createRepos(context, snapshot.data, 1);
-                  }),
-              // StreamBuilder(
-              //     stream: bloc.recWxArticleStream,
-              //     builder: (BuildContext context,
-              //         AsyncSnapshot<List<ReposModel>> snapshot) {
-              //       return createRepos(context, snapshot.data, 2);
-              //     }),
-            ],
-          );
+          RequestStatus loadStatus =
+              Utils.getLoadStatus(snapshot.hasError, snapshot.data);
+          return TTRefreshScaffold(
+              controller: _controller,
+              labelId: labelId,
+              loadStatus: loadStatus,
+              enablePullUp: false,
+              enablePullDown: true,
+              onRefresh: ({isReload}) {
+                return bloc.onRefresh(labelId: labelId);
+              },
+              child: ListView(
+                children: [
+                  buildBannerWidget(context, snapshot.data),
+                  SizedBox(
+                      height: 10, child: Container(color: ColorsMacro.col_F7F)),
+                  StreamBuilder(
+                      stream: bloc.recReposStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<ReposModel>> snapshot) {
+                        return createRepos(context, snapshot.data, 1);
+                      }),
+                  StreamBuilder(
+                      stream: bloc.recWxArticleStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<ReposModel>> snapshot) {
+                        return createRepos(context, snapshot.data, 2);
+                      }),
+                ],
+              ));
         });
   }
 
   /// 创建推荐文章
   Widget createRepos(BuildContext context, List<ReposModel> list, int type) {
-    if (ObjectUtil.isEmpty(list)) {
+    if (ObjectUtil.isEmpty(list) || list.length == 0) {
       return Container(
         color: Colors.red,
         height: 0,
@@ -68,11 +81,14 @@ class HomePage extends StatelessWidget {
     }
     TTLog.d(list);
     List<Widget> _children = list.map((model) {
-      return ReposItem(
-        model,
-        isHome: true,
-      );
+      return type == 1
+          ? ReposItem(
+              model,
+              isHome: true,
+            )
+          : ArticleItem(model, isHome: true);
     }).toList();
+    TTLog.d(_children.length);
     List<Widget> children = [];
     children.add(HeaderItem(
       margin: EdgeInsets.only(left: 0),
@@ -93,49 +109,6 @@ class HomePage extends StatelessWidget {
     children.addAll(_children);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: children,
-    );
-  }
-
-  Widget buildRepos(BuildContext context, List<ReposModel> list) {
-    if (ObjectUtil.isEmpty(list)) {
-      return new Container(height: 0.0);
-    }
-    List<Widget> _children = list.map((model) {
-      return new ReposItem(
-        model,
-        isHome: true,
-      );
-    }).toList();
-    List<Widget> children = [];
-    children.add(
-      SizedBox(height: 10, child: Container(color: ColorsMacro.col_F7F)),
-    );
-    children.addAll(_children);
-    return new Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: children,
-    );
-  }
-
-  Widget buildWxArticle(BuildContext context, List<ReposModel> list) {
-    if (ObjectUtil.isEmpty(list)) {
-      return new Container(height: 0.0);
-    }
-    List<Widget> _children = list.map((model) {
-      return new ReposItem(
-        model,
-        isHome: true,
-      );
-    }).toList();
-    List<Widget> children = new List();
-    children.add(
-      SizedBox(height: 10, child: Container(color: ColorsMacro.col_F7F)),
-    );
-    children.addAll(_children);
-    return new Column(
       mainAxisSize: MainAxisSize.min,
       children: children,
     );

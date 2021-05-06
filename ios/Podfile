@@ -1,9 +1,9 @@
 # Uncomment this line to define a global platform for your project
-# platform :ios, '9.0'
-
+ platform :ios, '10.0'
+source 'https://github.com/CocoaPods/Specs.git'
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
-
+source 'http://git.hnbangyao.com/byShop/ucmrepo.git'
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
@@ -31,6 +31,17 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  
+#  pod 'UCMHeader', :path => './component/UCMHeader'
+#  pod 'UCMUIKitCategory', :path => './component/UCMUIKitCategory'
+#  pod 'UCMHttpRequest', :path => './component/UCMHttpRequest'
+#  pod 'UCMCustomUIKit', :path => './component/UCMCustomUIKit'
+#  pod 'UCMAVPlayer', :path => './component/UCMAVPlayer'
+#  pod 'UCMRefresh', :path => './component/UCMRefresh'
+#  pod 'UCMScanCode', :path => './component/UCMScanCode'
+#  pod 'UCMBase', :path => './component/UCMBase'
+#  pod 'UCMJumpView', :path => './component/UCMJumpView'
+#  pod 'TT_CommonModule', :path => './component/TT_CommonModule'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 

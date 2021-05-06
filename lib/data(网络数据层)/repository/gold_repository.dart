@@ -21,6 +21,26 @@ class GoldResitory {
     return bannerList;
   }
 
+  /// /// 最新项目tab (首页的第二个tab)
+  Future<List<ReposModel>> getArticleListProject(int page) async {
+    BaseResp<Map<String, dynamic>> baseResp = await TTNetWorkingManager()
+        .request(
+            Method.get,
+            CurrentApi.getWanAndroidPath(
+                path: CurrentApi.ARTICLE_LISTPROJECT, page: page));
+    List<ReposModel> list;
+    if (baseResp.code != Constant.status_success) {
+      return Future.error(baseResp.msg);
+    }
+    if (baseResp.data != null) {
+      ComData comData = ComData.fromJson(baseResp.data);
+      list = comData.datas.map((e) {
+        return ReposModel.fromJson(e);
+      }).toList();
+    }
+    return list;
+  }
+
   /// 获取首页推荐文章
   Future<List<ReposModel>> getProjectList({int page: 1, data}) async {
     TTLog.d('我的第一次接收参数:$data');
@@ -61,7 +81,7 @@ class GoldResitory {
         return ReposModel.fromJson(value);
       }).toList();
     }
-    TTLog.d('ddsadsadsadsada');
+    TTLog.d('ddsadsadsadsada $list');
     return list;
   }
 
@@ -113,6 +133,22 @@ class GoldResitory {
     if (baseResp.data != null) {
       treeList = baseResp.data.map((value) {
         return TreeModel.fromJson(value);
+      }).toList();
+    }
+    return treeList;
+  }
+
+  /// 获取体系数据列表
+  Future<List<TreeModel>> getTree() async {
+    BaseResp<List> baseResp = await TTNetWorkingManager().request<List>(
+        Method.get, CurrentApi.getWanAndroidPath(path: CurrentApi.TREE));
+    List<TreeModel> treeList;
+    if (baseResp.code != Constant.status_success) {
+      return Future.error(baseResp.msg);
+    }
+    if (baseResp.data != null) {
+      treeList = baseResp.data.map((e) {
+        return TreeModel.fromJson(e);
       }).toList();
     }
     return treeList;

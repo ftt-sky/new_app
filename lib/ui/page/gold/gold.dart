@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:new_app/res(资源文件)/res_index.dart';
+import 'package:new_app/ui/page/gold/events_page.dart';
 import 'package:new_app/ui/page/gold/home_page.dart';
 import 'package:new_app/utils(%E5%B7%A5%E5%85%B7%E7%B1%BB)/tt_logutils.dart';
 import 'gold_lift.dart';
 import 'repos_page.dart';
 import 'System_page.dart';
-import 'event_page.dart';
+import 'events_page.dart';
 
 class _Page {
   final String lableId;
@@ -36,18 +37,22 @@ class GoldPage extends StatelessWidget {
   Widget createScaffold() {
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(builder: (BuildContext ctx) {
-          return IconButton(
-              icon: Icon(Icons.person), color: Colors.red, onPressed: () {});
-        }),
+        // leading: Builder(builder: (BuildContext ctx) {
+        //   return IconButton(
+        //       icon: Icon(Icons.person),
+        //       color: Colors.red,
+        //       onPressed: () {
+        //         Scaffold.of(ctx).openDrawer();
+        //       });
+        // }),
         centerTitle: true,
         title: TabLayout(),
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
+        //actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
       ),
       body: TabBarViewLayout(),
-      drawer: Drawer(
-        child: GoldLeftPage(),
-      ),
+      // drawer: Drawer(
+      //   child: GoldLeftPage(),
+      // ),
     );
   }
 }
@@ -78,11 +83,11 @@ class TabBarViewLayout extends StatelessWidget {
         return HomePage(labelId: labelId);
         break;
       case CurrentIds.titleRepos:
-        return ReposPage();
+        return ReposPage(labelId: labelId);
       case CurrentIds.titleEvents:
-        return EventPage();
+        return EventsPage(labelId: labelId);
       case CurrentIds.titleSystem:
-        return SystemPage();
+        return SystemPage(labelId: labelId);
       default:
         return Container();
         break;

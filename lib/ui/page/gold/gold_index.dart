@@ -1,5 +1,5 @@
 export 'com_list_page.dart';
-export 'event_page.dart';
+export 'events_page.dart';
 export 'gold.dart';
 export 'gold_lift.dart';
 export 'home_page.dart';

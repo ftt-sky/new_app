@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:new_app/current_index.dart';
+
 class StatusEvent {
   String labelId;
 
@@ -29,4 +32,24 @@ enum RequestStatus {
 
   /// 数据不存在
   empty
+}
+
+class ComEvent {
+  int id;
+  Object data;
+
+  ComEvent({
+    this.id,
+    this.data,
+  });
+}
+
+class Event {
+  static void sendAppComEvent(BuildContext context, ComEvent event) {
+    // BlocProvider.of<ApplicationBloc>(context).sendAppComEvent(event);
+  }
+
+  static void sendAppEvent(BuildContext context, int id) {
+    BlocProvider.of<ApplicationBloc>(context).sendAppEvent(id);
+  }
 }

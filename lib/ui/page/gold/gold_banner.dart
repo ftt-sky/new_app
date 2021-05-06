@@ -245,7 +245,45 @@ class ArticleItem extends StatelessWidget {
         padding: EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 10),
         child: Row(
           children: [
-            buildRepoTitleWidget(context, model, labelId),
+            new Expanded(
+                child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text(
+                  model.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyleMacro.titleBloD163,
+                ),
+                Gaps.vGap10,
+                new Text(
+                  model.desc,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyleMacro.titleNor146,
+                ),
+                Gaps.vGap5,
+                Row(
+                  children: [
+                    LikeBtn(
+                      labelId: labelId,
+                      id: model.originId ?? model.id,
+                      isLike: model.collect,
+                    ),
+                    Gaps.hGap10,
+                    Text(
+                      model.author,
+                      style: TextStyleMacro.titleNor126,
+                    ),
+                    Gaps.hGap10,
+                    Text(
+                      Utils.getTimeLine(context, model.publishTime),
+                      style: TextStyleMacro.titleNor126,
+                    )
+                  ],
+                )
+              ],
+            )),
             Container(
               alignment: Alignment.center,
               margin: EdgeInsets.only(left: 12),

@@ -1,6 +1,8 @@
 import 'dart:collection';
 
+import 'package:azlistview/azlistview.dart';
 import 'package:new_app/blocs(bloc%E7%9B%B8%E5%85%B3)/bloc_provider.dart';
+import 'package:new_app/current_index.dart';
 import 'package:new_app/data(%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%B1%82)/protocol/gold_model.dart';
 
 import 'package:new_app/data(网络数据层)/repository/repositoty_index.dart';
@@ -13,8 +15,32 @@ import 'package:new_app/event(事件类)/event.dart';
 class MainBloc implements BlocBase {
   /// 网络请求
   ///
+  ///
+  ///
+
+  ///****** ****** ****** System ****** ****** ****** /
+
+  BehaviorSubject<List<TreeModel>> _tree = BehaviorSubject<List<TreeModel>>();
+
+  Sink<List<TreeModel>> get _treeSink => _tree.sink;
+
+  Stream<List<TreeModel>> get treeStream => _tree.stream;
+
+  List<TreeModel> _treeList;
 
   int requestNum = 0;
+  List<ReposModel> _eventsList;
+  int _eventsPage = 0;
+
+  BehaviorSubject<List<ReposModel>> _events =
+      BehaviorSubject<List<ReposModel>>();
+
+  Sink<List<ReposModel>> get _eventsSink => _events.sink;
+
+  Stream<List<ReposModel>> get eventsStream => _events.stream;
+
+  List<ReposModel> _reposList;
+  int _reposPage = 0;
   GoldResitory _resitory = GoldResitory();
 
   /// 获取banner
@@ -52,6 +78,15 @@ class MainBloc implements BlocBase {
       case CurrentIds.titleHome:
         return getHomeData(labelId);
         break;
+      case CurrentIds.titleRepos:
+        return getArticleListProject(labelId, page);
+        break;
+      case CurrentIds.titleEvents:
+        return getArticleList(labelId, page);
+        break;
+      case CurrentIds.titleSystem:
+        return getTree(labelId);
+        break;
       default:
         return Future.delayed(Duration(seconds: 1));
     }
@@ -59,11 +94,39 @@ class MainBloc implements BlocBase {
 
   @override
   Future onLoadMore({data, String labeId}) {
-    return getData(labelId: labeId, page: 0);
+    int _page = 0;
+    switch (labeId) {
+      case CurrentIds.titleHome:
+        break;
+      case CurrentIds.titleRepos:
+        _page = ++_reposPage;
+        break;
+      case CurrentIds.titleEvents:
+        _page = ++_eventsPage;
+        break;
+      case CurrentIds.titleSystem:
+        break;
+      default:
+    }
+    return getData(labelId: labeId, page: _page);
   }
 
   @override
   Future onRefresh({data, String labelId, bool isReload}) {
+    switch (labelId) {
+      case CurrentIds.titleHome:
+        break;
+      case CurrentIds.titleRepos:
+        _reposPage = 0;
+        break;
+      case CurrentIds.titleEvents:
+        _eventsPage = 0;
+        break;
+      case CurrentIds.titleSystem:
+        break;
+      default:
+        break;
+    }
     return getData(labelId: labelId, page: 0);
   }
 
@@ -81,8 +144,92 @@ class MainBloc implements BlocBase {
   /// 获取首页数据
   Future getHomeData(String labelId) {
     getRecrepos(labelId);
-    //getRecWxArticle(labelId);
+    getRecWxArticle(labelId);
     return getBanner(labelId);
+  }
+
+  Future getHotRecItem() async {}
+
+  /// /// 最新项目tab (首页的第二个tab)
+  Future getArticleListProject(String labelId, int page) {
+    return _resitory.getArticleListProject(page).then((list) {
+      if (_reposList == null) {
+        _reposList = [];
+      }
+      if (page == 0) {
+        _reposList.clear();
+      }
+      _reposList.addAll(list);
+      _recReposSink.add(UnmodifiableListView<ReposModel>(_reposList));
+      homeEventSink.add(StatusEvent(
+          labelId, RequestStatus.noMore, page == 0 ? 1 : 2,
+          loadNum: requestNum));
+    }).catchError((_) {
+      if (ObjectUtil.isEmpty(_reposList)) {
+        _recRepos.sink.addError('error');
+        _reposPage--;
+        homeEventSink.add(StatusEvent(
+            labelId, RequestStatus.fail, page == 0 ? 1 : 2,
+            loadNum: requestNum));
+      }
+    });
+  }
+
+  /// 获取 文章列表
+  Future getArticleList(String labelId, int page) {
+    return _resitory.getArticleList(page: page).then((value) {
+      if (_eventsList == null) {
+        _eventsList = [];
+      }
+
+      if (page == 0) {
+        _eventsList.clear();
+      }
+      _eventsList.addAll(value);
+      _eventsSink.add(UnmodifiableListView<ReposModel>(_eventsList));
+      homeEventSink.add(StatusEvent(
+          labelId, RequestStatus.noMore, page == 0 ? 1 : 2,
+          loadNum: requestNum));
+    }).catchError((_) {
+      if (ObjectUtil.isEmpty(_eventsList)) {
+        _events.sink.addError("error");
+      }
+      _eventsPage--;
+      homeEventSink.add(StatusEvent(
+          labelId, RequestStatus.noMore, page == 0 ? 1 : 2,
+          loadNum: requestNum));
+    });
+  }
+
+  Future getTree(String labelId) {
+    return _resitory.getTree().then((value) {
+      if (_treeList == null) {
+        _treeList = [];
+      }
+      for (var i = 0, length = value.length; i < length; i++) {
+        String tag = Utils.getPinyin(value[i].name);
+        if (RegExp("[A-Z]").hasMatch(tag)) {
+          value[i].tagIndex = tag;
+        } else {
+          value[i].tagIndex = "#";
+        }
+      }
+
+      SuspensionUtil.sortListBySuspensionTag(value);
+
+      _treeList.clear();
+      _treeList.addAll(value);
+      _treeSink.add(UnmodifiableListView<TreeModel>(_treeList));
+      homeEventSink.add(
+          StatusEvent(labelId, RequestStatus.noMore, 1, loadNum: requestNum));
+    }).catchError(() {
+      if (ObjectUtil.isEmpty(_eventsList)) {
+        _events.sink.addError("error");
+      }
+      _eventsPage--;
+      homeEventSink.add(
+          StatusEvent(labelId, RequestStatus.noMore, 1, loadNum: requestNum));
+    });
   }
 
   /// 获取首页推荐文章
@@ -113,6 +260,7 @@ class MainBloc implements BlocBase {
       if (list.length > 6) {
         list = list.sublist(0, 6);
       }
+      TTLog.d('obj =========== $list');
       _recWxArticleSink.add(UnmodifiableListView<ReposModel>(list));
       configRequestEvent('tt', RequestStatus.success);
     }).catchError((_) {

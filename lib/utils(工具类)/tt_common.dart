@@ -59,6 +59,19 @@ class Utils {
     return circleAvatarMap[key];
   }
 
+  static Color getChipBgColor(String name) {
+    String pinyin = PinyinHelper.getFirstWordPinyin(name);
+    pinyin = pinyin.substring(0, 1).toUpperCase();
+    return nameToColor(pinyin);
+  }
+
+  static Color nameToColor(String name) {
+    // assert(name.length > 1);
+    final int hash = name.hashCode & 0xffff;
+    final double hue = (360.0 * hash / (1 << 15)) % 360.0;
+    return HSVColor.fromAHSV(1.0, hue, 0.4, 0.90).toColor();
+  }
+
   /// 时间转换
   static String getTimeLine(BuildContext context, int timeMillis) {
     return TimelineUtil.format(timeMillis,
@@ -79,6 +92,10 @@ class Utils {
       }
     }
     return (count >= 10 || title.length > 16) ? 14 : 18;
+  }
+
+  static bool isLogin() {
+    return ObjectUtil.isNotEmpty(SpUtil.getString(BaseConstant.keyAppToken));
   }
 }
 
@@ -110,6 +127,25 @@ Map<String, Color> circleAvatarMap = {
   'Y': Colors.yellow,
   'Z': Colors.grey,
   '#': Colors.blue,
+};
+
+Map<String, Color> themeColorMap = {
+  'gray': ColorsMacro.col_666,
+  'blue': Colors.blue,
+  'blueAccent': Colors.blueAccent,
+  'cyan': Colors.cyan,
+  'deepPurple': Colors.deepPurple,
+  'deepPurpleAccent': Colors.deepPurpleAccent,
+  'deepOrange': Colors.deepOrange,
+  'green': Colors.green,
+  'indigo': Colors.indigo,
+  'indigoAccent': Colors.indigoAccent,
+  'orange': Colors.orange,
+  'purple': Colors.purple,
+  'pink': Colors.pink,
+  'red': Colors.red,
+  'teal': Colors.teal,
+  'black': Colors.black,
 };
 
 class SizeMacro {
@@ -191,4 +227,16 @@ class TextStyleMacro {
     fontSize: Dimens.font_18,
     color: ColorsMacro.col_333,
   );
+}
+
+class BaseConstant {
+  static const String packageBase = 'base_library';
+
+  static const String keyShowGuide = 'show_guide';
+  static const String keyUserName = 'user_name';
+  static const String keyUserModel = 'user_model';
+  static const String keyAppToken = 'app_token';
+
+  static const String routeMain = 'route_main';
+  static const String routeLogin = 'route_login';
 }
