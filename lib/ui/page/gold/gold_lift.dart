@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screen_util.dart';
 import 'package:new_app/current_index.dart';
@@ -62,6 +64,7 @@ class GoldLeftPageState extends State<GoldLeftPage> {
 
   @override
   Widget build(BuildContext context) {
+    TTLog.d(ScreenUtil().statusBarHeight);
     if (Utils.isLogin()) {
       if (!_pageInfo.contains(loginOut)) {
         _pageInfo.add(loginOut);
@@ -79,7 +82,7 @@ class GoldLeftPageState extends State<GoldLeftPage> {
         body: Column(
       children: [
         Container(
-          height: 166,
+          height: 180,
           color: Theme.of(context).primaryColor,
           padding: EdgeInsets.only(top: ScreenUtil().statusBarHeight, left: 10),
           child: Stack(
@@ -92,8 +95,11 @@ class GoldLeftPageState extends State<GoldLeftPage> {
                       height: 64,
                       margin: EdgeInsets.only(top: 10, bottom: 10),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      )),
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: AssetImage(
+                            Utils.getImagePath(ImageStringMacro.userheader),
+                          )))),
                   Text(
                     _userName,
                     style: TextStyle(
@@ -112,6 +118,7 @@ class GoldLeftPageState extends State<GoldLeftPage> {
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
+                    iconSize: 18,
                     icon: Icon(Icons.edit, color: Colors.white),
                     onPressed: () {}),
               )
@@ -125,7 +132,11 @@ class GoldLeftPageState extends State<GoldLeftPage> {
             child: InkWell(
               onTap: () {},
               child: Center(
-                child: Text('一切为了技术'),
+                child: Text(
+                  '一切为了技术',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor, fontSize: 16),
+                ),
               ),
             ),
           ),
@@ -144,7 +155,17 @@ class GoldLeftPageState extends State<GoldLeftPage> {
                         _showLoginOutDialog(context);
                       } else if (pageInfo.titleId ==
                           CurrentIds.titleCollection) {
-                      } else {}
+                        RouteManager.pushcustonPage(
+                            context,
+                            BlocProvider<UserInfoBloc>(
+                                child: pageInfo.page, bloc: UserInfoBloc()),
+                            pageName: pageInfo.titleId,
+                            needLogin: Utils.isNeedLogin(pageInfo.titleId));
+                      } else {
+                        RouteManager.pushcustonPage(context, pageInfo.page,
+                            pageName: pageInfo.titleId,
+                            needLogin: Utils.isNeedLogin(pageInfo.titleId));
+                      }
                     },
                   );
                 }))

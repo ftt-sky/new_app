@@ -52,6 +52,8 @@ class ImageStringMacro {
   static const String myStr = 'images/my.png';
 
   static const String mysStr = 'images/my_s.png';
+
+  static const String userheader = 'MyPageCtrl_ImgDefaultLogo';
 }
 
 class RouteManager {
@@ -108,6 +110,7 @@ class RouteManager {
     if (context == null || ObjectUtil.isEmpty(url)) {
       return;
     }
+
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -115,6 +118,23 @@ class RouteManager {
                   title: title,
                   url: url,
                 )));
+  }
+
+  /// 通用跳转界面封装 判断 登录
+  static void pushcustonPage(
+    BuildContext context,
+    Widget page, {
+    String pageName,
+    bool needLogin = false,
+  }) {
+    if (context == null || page == null) {
+      return;
+    }
+    if (needLogin && !Utils.isLogin()) {
+      pushcustonPage(context, UserLoginPage());
+      return;
+    }
+    Navigator.push(context, CupertinoPageRoute<void>(builder: (ctx) => page));
   }
 
   static void pushTabPage(BuildContext context,

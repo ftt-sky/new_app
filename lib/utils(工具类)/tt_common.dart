@@ -97,6 +97,14 @@ class Utils {
   static bool isLogin() {
     return ObjectUtil.isNotEmpty(SpUtil.getString(BaseConstant.keyAppToken));
   }
+
+  static bool isNeedLogin(String pageId) {
+    if (pageId == CurrentIds.titleCollection) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 Map<String, Color> circleAvatarMap = {

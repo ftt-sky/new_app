@@ -63,6 +63,8 @@ dependencies:
   azlistview: ^1.1.1
   # 汉字转拼音
   lpinyin: ^2.0.1
+  # 解决键盘弹起,挡住输入框的问题
+  keyboard_avoider: ^0.1.2
 
 
 dev_dependencies:
@@ -96,4 +98,5 @@ flutter:
   - images/ydy_11.png
   - images/ydy_22.png
   - images/ydy_33.png
+  - images/MyPageCtrl_ImgDefaultLogo.png
   - ios/Runner/launch.png

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:new_app/blocs(bloc%E7%9B%B8%E5%85%B3)/bloc_provider.dart';
 import 'package:new_app/current_index.dart';
 import 'package:new_app/data(%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%B1%82)/data_index.dart';
@@ -35,7 +36,7 @@ class MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     setInitDir(initAppDocDir: true);
-    setLocalizedSimpleValues(localizedSimpleValues);
+    setLocalizedValues(localizedValues);
     init();
   }
 
@@ -48,6 +49,12 @@ class MyAppState extends State<MyApp> {
   _init() {
     BaseOptions baseOptions = TTNetWorkingManager.getDefOptions();
     baseOptions.baseUrl = Constant.setverAddress;
+    String cookie = SpUtil.getString(BaseConstant.keyAppToken);
+    if (ObjectUtil.isNotEmpty(cookie)) {
+      Map<String, dynamic> _headers = Map();
+      _headers["Cookie"] = cookie;
+      baseOptions.headers = _headers;
+    }
     HttpConfig config = HttpConfig(options: baseOptions);
     TTNetWorkingManager().setConfig(config);
   }
@@ -62,6 +69,11 @@ class MyAppState extends State<MyApp> {
       } else {
         _locale = null;
       }
+
+      String _colorKey = Sphelper.getThemeColor();
+      if (themeColorMap[_colorKey] != null) {
+        _themeColor = themeColorMap[_colorKey];
+      }
     });
   }
 
@@ -72,28 +84,38 @@ class MyAppState extends State<MyApp> {
     });
   }
 
-  Widget createMaterpp() {
-    return MaterialApp(
-        routes: {
-          StringSMacro.GoldStr: (ctx) => GoldPage(),
-        },
-        locale: _locale,
-        localizationsDelegates: [
-          CustomLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-        /// 设置支持本地化语言集合
-        supportedLocales: CustomLocalizations.supportedLocales,
-        title: "APP",
-        debugShowCheckedModeBanner: false,
-        color: Colors.black,
-        theme: ThemeData(
-            accentColor: Colors.white,
-            accentTextTheme:
-                TextTheme(bodyText1: TextStyle(color: Colors.amber))),
-        home: GoldPage());
+  Widget createMaterpp() {
+    return GestureDetector(
+        onTap: () {
+          SystemChannels.textInput.invokeMethod("TextInput.hide");
+        },
+        child: MaterialApp(
+            routes: {
+              StringSMacro.GoldStr: (ctx) => GoldPage(),
+            },
+            locale: _locale,
+            localizationsDelegates: [
+              CustomLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+
+            /// 设置支持本地化语言集合
+            supportedLocales: CustomLocalizations.supportedLocales,
+            title: "APP",
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              //brightness: Brightness.dark,
+              primaryColor: _themeColor,
+              accentColor: _themeColor,
+              indicatorColor: Colors.white,
+            ),
+            home: GoldPage()));
   }
 
   @override

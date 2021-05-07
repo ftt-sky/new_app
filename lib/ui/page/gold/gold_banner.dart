@@ -118,7 +118,6 @@ class ReposItem extends StatelessWidget {
       },
       child: Container(
         height: 160,
-        color: Colors.red,
         padding: EdgeInsets.only(left: 15, top: 10, right: 15),
         child: createItems(context),
       ),

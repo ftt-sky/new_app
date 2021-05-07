@@ -16,10 +16,10 @@ class _Page {
 }
 
 final List<_Page> _allPages = <_Page>[
-  _Page(CurrentIds.titleHome, "首页"),
-  _Page(CurrentIds.titleRepos, "项目"),
-  _Page(CurrentIds.titleEvents, '动态'),
-  _Page(CurrentIds.titleSystem, "体系")
+  _Page(CurrentIds.titleHome, CurrentIds.titleHome),
+  _Page(CurrentIds.titleRepos, CurrentIds.titleRepos),
+  _Page(CurrentIds.titleEvents, CurrentIds.titleEvents),
+  _Page(CurrentIds.titleSystem, CurrentIds.titleSystem)
 ];
 
 class GoldPage extends StatelessWidget {
@@ -37,22 +37,22 @@ class GoldPage extends StatelessWidget {
   Widget createScaffold() {
     return Scaffold(
       appBar: AppBar(
-        // leading: Builder(builder: (BuildContext ctx) {
-        //   return IconButton(
-        //       icon: Icon(Icons.person),
-        //       color: Colors.red,
-        //       onPressed: () {
-        //         Scaffold.of(ctx).openDrawer();
-        //       });
-        // }),
+        leading: Builder(builder: (BuildContext ctx) {
+          return IconButton(
+              icon: Icon(Icons.person),
+              color: Colors.red,
+              onPressed: () {
+                Scaffold.of(ctx).openDrawer();
+              });
+        }),
         centerTitle: true,
         title: TabLayout(),
-        //actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
+        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
       ),
       body: TabBarViewLayout(),
-      // drawer: Drawer(
-      //   child: GoldLeftPage(),
-      // ),
+      drawer: Drawer(
+        child: GoldLeftPage(),
+      ),
     );
   }
 }
@@ -69,7 +69,7 @@ class TabLayout extends StatelessWidget {
       indicatorSize: TabBarIndicatorSize.label,
       labelColor: Colors.black,
       tabs: _allPages.map((_Page page) {
-        return Tab(text: page.title);
+        return Tab(text: IntlUtil.getString(context, page.lableId));
       }).toList(),
     );
   }
