@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:new_app/current_index.dart';
 import 'package:new_app/event(事件类)/event.dart';
 import 'package:new_app/utils(%E5%B7%A5%E5%85%B7%E7%B1%BB)/tt_common.dart';
@@ -148,6 +149,97 @@ class LikeBtn extends StatelessWidget {
         Icons.favorite,
         color: (isLike == true) ? Colors.redAccent : ColorsMacro.col_999,
       ),
+    );
+  }
+}
+
+// 创建输入框
+// ignore: must_be_immutable
+class TextFiledWidget extends StatefulWidget {
+  Function(String value) onChanged;
+
+  Function() onTap;
+
+  VoidCallback onEditingComplete;
+
+  /// 是否隐藏文本
+  bool obscureText;
+
+  /// 提示文本
+  String labelText;
+
+  ///
+  IconData prefixIconData;
+  IconData suffixIconData;
+  TextFiledWidget(
+      {this.onChanged,
+      this.onTap,
+      this.obscureText,
+      this.labelText,
+      this.prefixIconData,
+      this.suffixIconData,
+      this.onEditingComplete});
+
+  @override
+  State<StatefulWidget> createState() {
+    return TextFiledWidgetState();
+  }
+}
+
+class TextFiledWidgetState extends State<TextFiledWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      // 实时输入回调
+      onChanged: widget.onChanged,
+      // 点击确定按钮回调
+      onEditingComplete: () {
+        SystemChannels.textInput.invokeMethod("TextInput.hide");
+      },
+
+      /// 点击输入框回调
+      onTap: widget.onTap,
+
+      /// 是否隐藏文本 用于密码
+      obscureText: widget.obscureText,
+
+      style: TextStyle(
+        color: Colors.blue,
+        fontSize: 14.0,
+      ),
+      // 输入框可用时的边框变化
+      decoration: InputDecoration(
+          // 填充一下
+          filled: true,
+          // 提示文本
+          labelText: widget.labelText,
+          // 去掉默认的下划线
+          // 输入前的边线
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          // 输入中的边线
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderSide: BorderSide(color: Colors.blue),
+          ),
+          // 输入框前的图标
+          prefixIcon: Icon(
+            widget.prefixIconData,
+            size: 18,
+            color: Colors.blue,
+          ),
+          // 输入文本后的图标
+          suffixIcon: IconButton(
+              icon: Icon(
+                widget.suffixIconData,
+                size: 18,
+                color: Colors.blue,
+              ),
+              onPressed: () {
+                widget.obscureText = !widget.obscureText;
+                setState(() {});
+              })),
     );
   }
 }

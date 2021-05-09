@@ -6,8 +6,9 @@ class BaseResp<T> {
   int code;
   String msg;
   T data;
+  Response response;
 
-  BaseResp(this.status, this.code, this.msg, this.data);
+  BaseResp(this.status, this.code, this.msg, this.data, this.response);
 
   @override
   String toString() {

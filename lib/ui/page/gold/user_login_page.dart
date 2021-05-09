@@ -1,6 +1,10 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/screen_util.dart';
+import 'package:new_app/current_index.dart';
+import 'package:new_app/data(%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%B1%82)/data_index.dart';
 import 'package:new_app/utils(%E5%B7%A5%E5%85%B7%E7%B1%BB)/tt_common.dart';
 
 Color getRandomWhiteColor(Random random) {
@@ -9,7 +13,11 @@ Color getRandomWhiteColor(Random random) {
   return Color.fromARGB(a, 255, 255, 255);
 }
 
+// ignore: must_be_immutable
 class UserLoginPage extends StatefulWidget {
+  // 1 登录 2注册 3 忘记密码
+  int type = 1;
+  UserLoginPage({this.type, Key key}) : super(key: key);
   @override
   createState() {
     return UserLoginPageState();
@@ -26,23 +34,33 @@ class UserLoginPageState extends State<UserLoginPage>
   // 运动速度控制
   double _maxSpeed = 2.0;
   // 设置最大的半径
-  double _maxRadius = 50.0;
+  double _maxRadius = 100.0;
   // 设置最大的角度
   double _maxThte = 2 * pi;
 
   double _tfbottom = 88;
+  // 用户名
+  String _name;
 
+  /// 密码
+  String _password;
+  // 确认密码
+  String _repassword;
   // 来个动画控制器
 
   AnimationController _animationController;
 
   AnimationController _fadeAnimationController;
 
+  UserInfoRepository userInfoRepository = UserInfoRepository();
+  UserModel userModel =
+      SpUtil.getObj(BaseConstant.keyUserModel, (v) => UserModel.fromJson(v));
+
   // 初始化函数中创建气泡
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 20; i++) {
       BobbleBean bean = BobbleBean();
       // 获取随机透明度白色
       bean.color = getRandomWhiteColor(_random);
@@ -58,24 +76,24 @@ class UserLoginPageState extends State<UserLoginPage>
       _list.add(bean);
     }
 
-    //创建动画控制器
-    _animationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1000));
-    // 执行刷新监听
-    //_animationController.addListener(() {
+    // //创建动画控制器
+    // _animationController = AnimationController(
+    //     vsync: this, duration: Duration(milliseconds: 1000));
+    // // 执行刷新监听
+    // _animationController.addListener(() {
     //   setState(() {});
     // });
 
-    _fadeAnimationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1800));
-    // 执行刷新监听
-    _fadeAnimationController.forward();
+    // _fadeAnimationController = AnimationController(
+    //     vsync: this, duration: Duration(milliseconds: 1800));
+    // // 执行刷新监听
+    // _fadeAnimationController.forward();
 
-    _fadeAnimationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _animationController.repeat();
-      }
-    });
+    // _fadeAnimationController.addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     _animationController.repeat();
+    //   }
+    // });
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -85,10 +103,11 @@ class UserLoginPageState extends State<UserLoginPage>
     super.didChangeMetrics();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
-        if (MediaQuery.of(context).viewInsets.bottom == 0) {
+        double bottom = MediaQuery.of(context).viewInsets.bottom;
+        if (bottom == 0) {
           _tfbottom = 88;
         } else {
-          _tfbottom = 180;
+          _tfbottom = bottom;
         }
       });
     });
@@ -121,13 +140,20 @@ class UserLoginPageState extends State<UserLoginPage>
 
         // 输入区域
 
-        buildBottomColumn()
+        buildBottomColumn(),
+        // 创建返回按钮
+        buildBackBtn()
       ]),
     );
   }
 
+  Widget buildBackBtn() {
+    return Positioned(
+        left: 10, top: ScreenUtil().statusBarHeight, child: BackButton());
+  }
+
   /// 背景颜色
-  buildBackgoround() {
+  Widget buildBackgoround() {
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -141,7 +167,7 @@ class UserLoginPageState extends State<UserLoginPage>
     );
   }
 
-  buildBobbleWidget(BuildContext context) {
+  Widget buildBobbleWidget(BuildContext context) {
     // 画板
     return CustomPaint(
       //
@@ -152,7 +178,7 @@ class UserLoginPageState extends State<UserLoginPage>
   }
 
   // 高斯模糊
-  buildBlurWidget() {
+  Widget buildBlurWidget() {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 0.3, sigmaY: 0.3),
       child: Container(color: Colors.white.withOpacity(0.1)),
@@ -160,7 +186,7 @@ class UserLoginPageState extends State<UserLoginPage>
   }
 
   // 创建标题
-  buildTopTextWidget() {
+  Widget buildTopTextWidget() {
     return Positioned(
         left: 0,
         right: 0,
@@ -173,135 +199,149 @@ class UserLoginPageState extends State<UserLoginPage>
   }
 
   // 创建输入内容
-  buildBottomColumn() {
+  Widget buildBottomColumn() {
     return Positioned(
         bottom: _tfbottom,
         left: 40,
         right: 40,
-        child: FadeTransition(
-            opacity: _fadeAnimationController,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFiledWidget(
-                  obscureText: false,
-                  labelText: '账号',
-                  prefixIconData: Icons.phone_android_outlined,
-                ),
-                Gaps.vGap10,
-                TextFiledWidget(
-                  obscureText: true,
-                  labelText: '密码',
-                  prefixIconData: Icons.lock_outline,
-                  suffixIconData: Icons.visibility,
-                ),
-                Gaps.vGap10,
-                Container(
+        // child: FadeTransition(
+        //     opacity: _fadeAnimationController,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFiledWidget(
+              obscureText: false,
+              labelText: '账号',
+              prefixIconData: Icons.phone_android_outlined,
+              onChanged: (value) {
+                TTLog.d('账号 $value');
+                _name = value;
+              },
+            ),
+            Gaps.vGap10,
+            TextFiledWidget(
+              obscureText: true,
+              labelText: '密码',
+              prefixIconData: Icons.lock_outline,
+              suffixIconData: Icons.visibility,
+              onChanged: (value) {
+                TTLog.d('密码$value');
+                _password = value;
+              },
+            ),
+            Gaps.vGap10,
+            widget.type != 1
+                ? TextFiledWidget(
+                    obscureText: true,
+                    labelText: '确认密码',
+                    prefixIconData: Icons.lock_outline,
+                    suffixIconData: Icons.visibility,
+                    onChanged: (value) {
+                      TTLog.d('密码$value');
+                      _repassword = value;
+                    },
+                  )
+                : Container(),
+            Gaps.vGap10,
+            widget.type == 1
+                ? Container(
                     alignment: Alignment.centerRight,
                     child: Text(
                       '忘记密码',
                       style: TextStyle(fontSize: 14, color: Colors.orange),
                       textAlign: TextAlign.end,
-                    )),
-                Gaps.vGap20,
-                Container(
-                  height: 44,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      '登录',
+                    ))
+                : Container(),
+            Gaps.vGap20,
+            widget.type == 1
+                ? Container(
+                    height: 44,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ontapLogin();
+                      },
+                      child: Text(
+                        '登录',
+                      ),
                     ),
-                  ),
+                  )
+                : Container(),
+            Gaps.vGap10,
+            Container(
+              height: 44,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  ontapRegisterPage();
+                },
+                child: Text(
+                  widget.type == 3 ? '登录' : '注册',
                 ),
-                Gaps.vGap10,
-                Container(
-                  height: 44,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      '注册',
-                    ),
-                  ),
-                )
-              ],
-            )));
+              ),
+            )
+          ],
+        ));
+    //);
   }
 
-  void phonechange(String value) {}
-}
+  // 点击登录
+  ontapLogin() {
+    configinfoisEmpty();
 
-// ignore: must_be_immutable
-class TextFiledWidget extends StatelessWidget {
-  Function(String value) onChanged;
+    LoginReq req = LoginReq(_name, _password);
+    userInfoRepository
+        .login(req)
+        .then((UserModel model) {})
+        .catchError((error) {
+      Utils.showSnackbar(context, error.toString());
+    });
+  }
 
-  Function() onTap;
+  configinfoisEmpty() {
+    SystemChannels.textInput.invokeMethod("TextInput.hide");
+    if (ObjectUtil.isEmpty(_name)) {
+      Utils.showSnackbar(context, '请输入用户名~');
+      return;
+    }
+    if (ObjectUtil.isEmpty(_password)) {
+      Utils.showSnackbar(context, '请输入密码~');
+      return;
+    }
 
-  /// 是否隐藏文本
-  bool obscureText;
+    if (widget.type != 1) {
+      if (ObjectUtil.isEmpty(_repassword)) {
+        Utils.showSnackbar(context, '请输入确认密码~');
+        return;
+      }
+    }
+  }
 
-  /// 提示文本
-  String labelText;
+  // 点击注册
+  ontapRegisterPage() {
+    if (widget.type == 1) {
+      RouteManager.pushcustonPage(context, UserLoginPage(type: 2));
+    } else if (widget.type == 2) {
+      configinfoisEmpty();
+      userRegister();
+    } else {}
+  }
 
-  ///
-  IconData prefixIconData;
-  IconData suffixIconData;
-  TextFiledWidget(
-      {this.onChanged,
-      this.onTap,
-      this.obscureText,
-      this.labelText,
-      this.prefixIconData,
-      this.suffixIconData});
+  /// 注册网络请求
+  userRegister() {
+    RegisterReq req = RegisterReq(_name, _password, _repassword);
+    userInfoRepository.register(req).then((UserModel model) {
+      gotoMainPage('注册成功~');
+    });
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      // 实时输入回调
-      onChanged: onChanged,
-
-      onEditingComplete: () {},
-
-      /// 点击输入框回调
-      onTap: onTap,
-
-      /// 是否隐藏文本 用于密码
-      obscureText: obscureText,
-
-      style: TextStyle(
-        color: Colors.blue,
-        fontSize: 14.0,
-      ),
-      // 输入框可用时的边框变化
-      decoration: InputDecoration(
-          // 填充一下
-          filled: true,
-          // 提示文本
-          labelText: labelText,
-          // 去掉默认的下划线
-          // 输入前的边线
-          enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          // 输入中的边线
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            borderSide: BorderSide(color: Colors.blue),
-          ),
-          // 输入框前的图标
-          prefixIcon: Icon(
-            prefixIconData,
-            size: 18,
-            color: Colors.blue,
-          ),
-          // 输入文本后的图标
-          suffixIcon: Icon(
-            suffixIconData,
-            size: 18,
-            color: Colors.blue,
-          )),
-    );
+  // 注册 登录 成功 跳转到首页
+  gotoMainPage(String msg) {
+    Utils.showSnackbar(context, msg);
+    Future.delayed(Duration(microseconds: 500), () {
+      Event.sendAppEvent(context, Constant.type_refresh_all);
+      RouteManager.goMain(context);
+    });
   }
 }
 

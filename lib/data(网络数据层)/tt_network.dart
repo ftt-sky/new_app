@@ -92,6 +92,12 @@ class TTNetWorkingManager {
     _mergeOption(config.options);
   }
 
+  void setCookie(String cookie) {
+    Map<String, dynamic> _headers = Map();
+    _headers["Cookie"] = cookie;
+    _dio.options.headers.addAll(_headers);
+  }
+
   /*
  * 获取网路请求
  * method 请求方法
@@ -108,7 +114,8 @@ class TTNetWorkingManager {
     if (respR.response.statusCode == HttpStatus.ok ||
         respR.response.statusCode == HttpStatus.created) {
       try {
-        return BaseResp(respR.status, respR.code, respR.msg, respR.data);
+        return BaseResp(
+            respR.status, respR.code, respR.msg, respR.data, respR.response);
       } catch (e) {
         return new Future.error(new DioError(
           response: respR.response,

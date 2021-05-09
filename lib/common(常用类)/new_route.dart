@@ -131,7 +131,7 @@ class RouteManager {
       return;
     }
     if (needLogin && !Utils.isLogin()) {
-      pushcustonPage(context, UserLoginPage());
+      pushcustonPage(context, UserLoginPage(type: 1));
       return;
     }
     Navigator.push(context, CupertinoPageRoute<void>(builder: (ctx) => page));

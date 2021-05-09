@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -104,6 +105,10 @@ class Utils {
     } else {
       return false;
     }
+  }
+
+  static showSnackbar(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$msg')));
   }
 }
 
