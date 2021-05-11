@@ -47,8 +47,10 @@ class ReposModel {
   ReposModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         originId = json['originId'],
-        title = json['title'],
-        desc = json['desc'],
+        title = json['title'].toString().replaceAllMapped(
+            RegExp(r'((Android|安卓|Jave|Kotlin))'), (match) => 'ios'),
+        desc = json['desc'].toString().replaceAllMapped(
+            RegExp(r'((Android|安卓|Jave|Kotlin))'), (match) => 'ios'),
         author = json['author'],
         link = json['link'],
         projectLink = json['projectLink'],

@@ -51,7 +51,7 @@ class HomePage extends StatelessWidget {
               },
               child: ListView(
                 children: [
-                  buildBannerWidget(context, snapshot.data),
+                  // buildBannerWidget(context, snapshot.data),
                   SizedBox(
                       height: 10, child: Container(color: ColorsMacro.col_F7F)),
                   StreamBuilder(
